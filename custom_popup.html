@@ -1,0 +1,38 @@
+<script src="https://checkout.razorpay.com/v1/razorpay.js"></script>
+  <button id="button1" style="background-color: #3399cc; color: white; font-size: 16px; font-family: sans-serif">Pay</button>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>var rp = new Razorpay({
+        key: "rzp_test_vZmsDFpMF5F89l",
+        image: "https://i.imgur.com/n5tjHFD.png",
+        name: "Crime Master Gogo",
+       });
+ </script>after some time
+ <span>Processing Payment...</span>
+ <button id="button">Take me back to payment</button>
+ <script>  
+ 	var data = {
+        amount: 6666,
+        currency: "INR",
+        email: "gaurav.kumar@example.com",
+        contact: 9123456780,
+        notes: {
+          address: "Ground Floor, SJR Cyber, Laskar Hosur Road, Bengaluru",
+        },
+        save: 1,
+       method: 'upi',
+
+       };
+ 	document.getElementById("button1").onclick = function(){
+       
+        rp.createPayment(data);
+        rp.on("payment.success", function(resp) {
+          alert(resp.razorpay_payment_id) 
+          });
+        rp.on("payment.error", function(resp){alert(resp.error.description)});
+
+}
+ $('button').click(function()
+ {  
+     rp.focus();
+ })
+</script>

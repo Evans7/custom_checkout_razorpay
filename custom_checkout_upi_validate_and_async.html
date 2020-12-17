@@ -1,0 +1,60 @@
+<script src="https://checkout.razorpay.com/v1/razorpay.js"></script>
+  <button id="rzp-button1" style="background-color: #3399cc; color: white; font-size: 16px; font-family: sans-serif">Pay</button>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <input type="text" id="vpa" name="vpa" style="color:black; font-family: sans-serif;">
+  <script>
+       var razorpay = new Razorpay({
+        key: "rzp_test_vZmsDFpMF5F89l",
+        image: "https://i.imgur.com/n5tjHFD.png",
+        name: "Crime Master Gogo",
+       });
+       var data = {
+        amount: 6666,
+        currency: "INR",
+        email: "gaurav.kumar@example.com",
+        contact: 9123456780,
+        notes: {
+          address: "Ground Floor, SJR Cyber, Laskar Hosur Road, Bengaluru",
+        },
+        save: 1,
+       method: 'upi',
+
+       };
+        var vpa=document.getElementById("vpa")
+
+       document.getElementById("rzp-button1").onclick = function(){
+        razorpay.verifyVpa(vpa.value)
+          .then((resp) => {
+    alert("chill")
+  })
+  .catch((resp) => {
+    alert(resp.error.description)
+  });
+        razorpay.createPayment(data, {
+   paused: true,
+   message: 'Confirming order..'
+});
+
+        $.ajax({
+        url: "http://127.0.0.1:8000/simply/",
+        headers: {
+        'X-CSRFToken': "{{csrf_token}}",
+
+                },
+            type:"post",
+            data: data,
+            success:function(res){
+             razorpay.emit('payment.resume');
+             console.log("Done")
+                },
+            error:function(error){
+            razorpay.emit('payment.cancel');
+                }
+                })
+        razorpay.on("payment.success", function(resp) {
+          alert(resp.razorpay_payment_id) 
+          });
+        razorpay.on("payment.error", function(resp){alert(resp.error.description)});
+
+}
+</script>

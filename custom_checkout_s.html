@@ -1,0 +1,52 @@
+<html>
+<script type="text/javascript" src="https://checkout.razorpay.com/v1/razorpay.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<button id="btn">Pay now</button><br>
+<script>
+var razorpay = new Razorpay({  key: 'rzp_test_FsRGzuburmgNQL',
+image: 'https://i.imgur.com/n5tjHFD.png',});
+var data = {
+  amount: 0,
+  currency: "INR",
+  email: 'gaurav.kumar@example.com',
+  contact: '9123456780',
+  order_id: 'order_GDHTxgSaMnx0jC',
+  customer_id: 'cust_GAVwteSxaXrc7O',
+  recurring: '1',
+  method: 'emandate',
+  bank: 'HDFC',
+  auth_type: 'netbanking',
+  'bank_account[name]': 'Gaurav Kumar',
+  'bank_account[account_number]': '1121431121541121',
+  'bank_account[account_type]': 'savings',
+  'bank_account[ifsc]': 'HDFC0000001'
+};
+var btn = document.querySelector('#btn');
+btn.addEventListener('click', function(){
+    razorpay.createPayment(data);
+    razorpay.on('payment.success', function(resp) {
+    alert(resp.razorpay_payment_id),
+    alert(resp.razorpay_order_id),
+    alert(resp.razorpay_signature),
+    data={'payment_id':resp.razorpay_payment_id,'order_id':resp.razorpay_order_id, 'signature':resp.razorpay_signature},
+    console.log(data)
+        $.ajax({
+        url: "http://127.0.0.1:8000/recurpay/",
+        headers: {
+        'X-CSRFToken': "{{ csrf_token }}"
+                },
+            type:"post",
+            data: data,
+            success:function(res){
+             alert("Reversed")
+                },
+            error:function(error){
+            alert("Reverse failed")
+                }
+                })
+});
+  razorpay.on('payment.error', function(resp){alert(resp.error.description)});
+})
+</script>
+</html>
